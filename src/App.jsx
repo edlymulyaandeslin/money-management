@@ -108,7 +108,7 @@ function App() {
           >
             <Menu size={24} />
           </button>
-          <h1 className="text-xl font-semibold">Money Mangement</h1>
+          <h1 className="text-xl font-semibold">Money Management</h1>
         </div>
         <div className="hidden md:flex items-center space-x-4">
           <div className="relative">
@@ -393,7 +393,7 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-green-100 text-center py-4 text-sm text-green-800">
-        &copy; 2025 Money Mangement. All rights reserved.
+        &copy; 2025 Money Management. All rights reserved.
       </footer>
     </div>
   );
