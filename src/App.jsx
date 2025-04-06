@@ -1,21 +1,22 @@
 import {
+  ArrowLeft,
   BarChart2,
+  BookDashed,
   Check,
   ChevronLeft,
   ChevronRight,
-  Home,
   Menu,
-  PlusCircle,
   Search as SearchIcon,
   Trash,
   X,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import './App.css';
+import LaporanPage from './components/LaporanPage';
+import LoginPage from './components/LoginPage';
 
 const MENU_ITEMS = [
-  { key: 'dashboard', label: 'Dashboard', icon: <Home size={20} /> },
-  { key: 'pemasukan', label: 'Transaksi', icon: <PlusCircle size={20} /> },
+  { key: 'pemasukan', label: 'Dashboard', icon: <BookDashed size={20} /> },
   { key: 'laporan', label: 'Laporan', icon: <BarChart2 size={20} /> },
 ];
 
@@ -113,6 +114,14 @@ function App() {
     setTimeout(() => setNotif({ show: false, message: '' }), 3000);
   };
 
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem('isLoggedIn') === 'true'
+  );
+
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <div className="flex h-screen flex-col bg-white">
       {/* Header */}
@@ -136,12 +145,19 @@ function App() {
               className="pl-8 pr-3 py-1 rounded bg-white text-green-900 border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-300"
             />
             <SearchIcon
-              className="absolute left-2 top-1.5 text-green-500"
+              className="absolute left-2 top-2 text-green-500"
               size={16}
             />
           </div>
 
-          <a href="#" className="hover:bg-green-500 px-3 py-1 rounded">
+          <a
+            href="#"
+            onClick={() => {
+              localStorage.removeItem('isLoggedIn');
+              setIsLoggedIn(false);
+            }}
+            className="hover:bg-green-500 px-3 py-1 rounded"
+          >
             Logout
           </a>
         </div>
@@ -150,7 +166,7 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
-          className={`z-10 fixed inset-y-0 left-0 w-64 bg-green-700 text-white p-5 transform
+          className={`z-20 fixed inset-y-0 left-0 w-64 bg-green-700 text-white p-5 transform
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             transition-transform duration-200 ease-in-out
             md:relative md:translate-x-0`}
@@ -159,7 +175,7 @@ function App() {
             <h2 className="text-lg font-semibold">Menu</h2>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="focus:outline-none"
+              className="focus:outline-none cursor-pointer"
             >
               <X size={24} />
             </button>
@@ -176,7 +192,7 @@ function App() {
                     setSidebarOpen(false);
                   }}
                   className={`
-                    w-full flex items-center space-x-2 px-3 py-2 rounded transition
+                    w-full flex items-center space-x-2 px-3 py-2 rounded transition cursor-pointer
                     ${
                       isActive
                         ? isExpense
@@ -197,6 +213,19 @@ function App() {
                 </button>
               );
             })}
+            <a
+              href="#"
+              onClick={() => {
+                localStorage.removeItem('isLoggedIn');
+                setIsLoggedIn(false);
+              }}
+              className="w-full flex items-center space-x-2 px-2 py-1 rounded transition md:hidden hover:bg-green-600"
+            >
+              <span>
+                <ArrowLeft />
+              </span>
+              <span>Logout</span>
+            </a>
           </nav>
         </aside>
 
@@ -223,215 +252,227 @@ function App() {
             Pemasukan & Pengeluaran
           </h2>
 
-          {/* Ringkasan Bulan Ini */}
-          <div className="grid md:grid-cols-3 gap-4 mb-4">
-            <div className="bg-green-100 p-4 rounded-lg shadow border border-green-200">
-              <h3 className="text-green-800 font-semibold text-lg mb-1">
-                Total Pemasukan Bulan Ini
-              </h3>
-              <p className="text-2xl text-green-700 font-bold">
-                Rp {totalPemasukan.toLocaleString('id-ID')}
-              </p>
-            </div>
-            <div className="bg-red-100 p-4 rounded-lg shadow border border-red-200">
-              <h3 className="text-red-800 font-semibold text-lg mb-1">
-                Total Pengeluaran Bulan Ini
-              </h3>
-              <p className="text-2xl text-red-700 font-bold">
-                Rp {totalPengeluaran.toLocaleString('id-ID')}
-              </p>
-            </div>
-            <div className="bg-green-100 p-4 rounded-lg shadow border border-green-200">
-              <h3 className="text-green-800 font-semibold text-lg mb-1">
-                Sisa Saldo
-              </h3>
-              <p className="text-2xl text-green-700 font-bold">
-                Rp {saldo.toLocaleString('id-ID')}
-              </p>
-            </div>
-          </div>
+          {activeMenu === 'pemasukan' && (
+            <>
+              {/* Ringkasan Bulan Ini */}
+              <div className="grid md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-green-100 p-4 rounded-lg shadow border border-green-200">
+                  <h3 className="text-green-800 font-semibold text-lg mb-1">
+                    Total Pemasukan Bulan Ini
+                  </h3>
+                  <p className="text-2xl text-green-700 font-bold">
+                    Rp {totalPemasukan.toLocaleString('id-ID')}
+                  </p>
+                </div>
+                <div className="bg-red-100 p-4 rounded-lg shadow border border-red-200">
+                  <h3 className="text-red-800 font-semibold text-lg mb-1">
+                    Total Pengeluaran Bulan Ini
+                  </h3>
+                  <p className="text-2xl text-red-700 font-bold">
+                    Rp {totalPengeluaran.toLocaleString('id-ID')}
+                  </p>
+                </div>
+                <div className="bg-green-100 p-4 rounded-lg shadow border border-green-200">
+                  <h3 className="text-green-800 font-semibold text-lg mb-1">
+                    Sisa Saldo
+                  </h3>
+                  <p className="text-2xl text-green-700 font-bold">
+                    Rp {saldo.toLocaleString('id-ID')}
+                  </p>
+                </div>
+              </div>
 
-          {/* Form */}
-          <div className="bg-white p-6 rounded-lg shadow mb-6 border border-green-100">
-            <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="block font-medium mb-1 text-green-900">
-                  Jenis
-                </label>
-                <select
-                  value={formData.jenis}
-                  onChange={(e) =>
-                    setFormData({ ...formData, jenis: e.target.value })
-                  }
-                  className="w-full border border-green-300 rounded p-2 focus:ring-green-300 focus:border-green-300"
+              {/* Form */}
+              <div className="bg-white p-6 rounded-lg shadow mb-6 border border-green-100">
+                <form
+                  onSubmit={handleSubmit}
+                  className="grid gap-4 md:grid-cols-2"
                 >
-                  <option>Pemasukan</option>
-                  <option>Pengeluaran</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1 text-green-900">
-                  Jumlah
-                </label>
-                <input
-                  type="number"
-                  value={formData.jumlah}
-                  onChange={(e) =>
-                    setFormData({ ...formData, jumlah: e.target.value })
-                  }
-                  min={1000}
-                  placeholder="0.00"
-                  className="w-full border border-green-300 rounded p-2 focus:ring-green-300 focus:border-green-300"
-                  required
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block font-medium mb-1 text-green-900">
-                  Deskripsi
-                </label>
-                <input
-                  type="text"
-                  value={formData.deskripsi}
-                  onChange={(e) =>
-                    setFormData({ ...formData, deskripsi: e.target.value })
-                  }
-                  placeholder="Contoh: Gaji Bulanan"
-                  className="w-full border border-green-300 rounded p-2 focus:ring-green-300 focus:border-green-300"
-                  required
-                />
-              </div>
-              <div className="md:col-span-2 text-right">
-                <button
-                  type="submit"
-                  className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition cursor-pointer"
-                >
-                  Simpan
-                </button>
-              </div>
-            </form>
-          </div>
-
-          {/* Filter & Search (mobile) */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 space-y-2 md:space-y-0">
-            <div className="flex items-center space-x-2">
-              <label className="text-green-900">Filter:</label>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="border border-green-300 rounded p-1 focus:ring-green-300 focus:border-green-300"
-              >
-                <option value="all">Semua</option>
-                <option value="Pemasukan">Pemasukan</option>
-                <option value="Pengeluaran">Pengeluaran</option>
-              </select>
-            </div>
-            <div className="relative md:hidden">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 pr-3 py-1 rounded bg-white text-green-900 border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-300"
-              />
-              <SearchIcon
-                className="absolute left-2 top-1.5 text-green-500"
-                size={16}
-              />
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="bg-white p-4 rounded-lg shadow overflow-x-auto border border-green-100">
-            <table className="min-w-full divide-y divide-green-100">
-              <thead className="bg-green-100 sticky top-0">
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-green-800">
-                    Tanggal
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-green-800">
-                    Jenis
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-green-800">
-                    Deskripsi
-                  </th>
-                  <th className="px-4 py-2 text-right text-sm font-medium text-green-800">
-                    Jumlah
-                  </th>
-                  <th className="px-4 py-2 text-right text-sm font-medium text-green-800">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {pageData.map((tx, i) => (
-                  <tr
-                    key={i}
-                    className={`transition ${
-                      i % 2 === 0 ? 'bg-white' : 'bg-green-50'
-                    } hover:bg-gray-200`}
-                  >
-                    <td className="px-4 py-3 text-sm text-green-900">
-                      {tx.tanggal}
-                    </td>
-                    <td
-                      className={`px-4 py-3 text-sm ${
-                        tx.jenis === 'Pengeluaran'
-                          ? 'text-red-600'
-                          : 'text-green-600'
-                      }`}
+                  <div>
+                    <label className="block font-medium mb-1 text-green-900">
+                      Jenis
+                    </label>
+                    <select
+                      value={formData.jenis}
+                      onChange={(e) =>
+                        setFormData({ ...formData, jenis: e.target.value })
+                      }
+                      className="w-full border border-green-300 rounded p-2 focus:ring-green-300 focus:border-green-300"
                     >
-                      {tx.jenis}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-green-900">
-                      {tx.deskripsi}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right text-green-900">
-                      Rp {tx.jumlah.toLocaleString('id-ID')}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => handleDelete(i)}
-                        className="text-red-600 hover:text-red-800 text-sm cursor-pointer"
+                      <option>Pemasukan</option>
+                      <option>Pengeluaran</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-medium mb-1 text-green-900">
+                      Jumlah
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.jumlah}
+                      onChange={(e) =>
+                        setFormData({ ...formData, jumlah: e.target.value })
+                      }
+                      min={1000}
+                      placeholder="0.00"
+                      className="w-full border border-green-300 rounded p-2 focus:ring-green-300 focus:border-green-300"
+                      required
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block font-medium mb-1 text-green-900">
+                      Deskripsi
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.deskripsi}
+                      onChange={(e) =>
+                        setFormData({ ...formData, deskripsi: e.target.value })
+                      }
+                      placeholder="Contoh: Gaji Bulanan"
+                      className="w-full border border-green-300 rounded p-2 focus:ring-green-300 focus:border-green-300"
+                      required
+                    />
+                  </div>
+                  <div className="md:col-span-2 text-right">
+                    <button
+                      type="submit"
+                      className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition cursor-pointer"
+                    >
+                      Simpan
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Filter & Search (mobile) */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 space-y-2 md:space-y-0">
+                <div className="flex items-center space-x-2">
+                  <label className="text-green-900">Filter:</label>
+                  <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    className="border border-green-300 rounded p-1 focus:ring-green-300 focus:border-green-300"
+                  >
+                    <option value="all">Semua</option>
+                    <option value="Pemasukan">Pemasukan</option>
+                    <option value="Pengeluaran">Pengeluaran</option>
+                  </select>
+                </div>
+                <div className="relative md:hidden">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-8 pr-3 py-1 rounded bg-white text-green-900 border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-300"
+                  />
+                  <SearchIcon
+                    className="absolute left-2 top-2 text-green-500"
+                    size={16}
+                  />
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="bg-white p-4 rounded-lg shadow overflow-x-auto border border-green-100">
+                <table className="min-w-full divide-y divide-green-100">
+                  <thead className="bg-green-100 sticky top-0">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-green-800">
+                        Tanggal
+                      </th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-green-800">
+                        Jenis
+                      </th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-green-800">
+                        Deskripsi
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-medium text-green-800">
+                        Jumlah
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-medium text-green-800">
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageData.map((tx, i) => (
+                      <tr
+                        key={i}
+                        className={`transition ${
+                          i % 2 === 0 ? 'bg-white' : 'bg-green-50'
+                        } hover:bg-gray-200`}
                       >
-                        <Trash size={20} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                        <td className="px-4 py-3 text-sm text-green-900">
+                          {tx.tanggal}
+                        </td>
+                        <td
+                          className={`px-4 py-3 text-sm ${
+                            tx.jenis === 'Pengeluaran'
+                              ? 'text-red-600'
+                              : 'text-green-600'
+                          }`}
+                        >
+                          {tx.jenis}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-green-900">
+                          {tx.deskripsi}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right text-green-900">
+                          Rp {tx.jumlah.toLocaleString('id-ID')}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <button
+                            onClick={() => handleDelete(i)}
+                            className="text-red-600 hover:text-red-800 text-sm cursor-pointer"
+                          >
+                            <Trash size={20} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
 
-                {pageData.length == 0 && (
-                  <tr className="hover:bg-gray-200">
-                    <td colSpan={5} className="text-center px-4 py-3 text-sm">
-                      Data kosong
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                    {pageData.length == 0 && (
+                      <tr className="hover:bg-gray-200">
+                        <td
+                          colSpan={5}
+                          className="text-center px-4 py-3 text-sm"
+                        >
+                          Data kosong
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-end space-x-2 mt-4">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="p-1 rounded hover:bg-green-50 disabled:opacity-50"
-              >
-                <ChevronLeft className="text-green-600" size={20} />
-              </button>
-              <span className="text-sm text-green-900">
-                Halaman {currentPage} dari {totalPages}
-              </span>
-              <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={currentPage === totalPages}
-                className="p-1 rounded hover:bg-green-50 disabled:opacity-50"
-              >
-                <ChevronRight className="text-green-600" size={20} />
-              </button>
-            </div>
-          </div>
+                {/* Pagination */}
+                <div className="flex items-center justify-end space-x-2 mt-4">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="p-1 rounded hover:bg-green-50 disabled:opacity-50"
+                  >
+                    <ChevronLeft className="text-green-600" size={20} />
+                  </button>
+                  <span className="text-sm text-green-900">
+                    Halaman {currentPage} dari {totalPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="p-1 rounded hover:bg-green-50 disabled:opacity-50"
+                  >
+                    <ChevronRight className="text-green-600" size={20} />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeMenu === 'laporan' && <LaporanPage data={allData} />}
         </main>
       </div>
 
