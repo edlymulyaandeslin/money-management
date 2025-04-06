@@ -47,7 +47,9 @@ function App() {
     if (!formData.jumlah || !formData.deskripsi) return;
 
     const newEntry = {
-      tanggal: new Date().toISOString().split('T')[0],
+      tanggal: new Date().toLocaleDateString('en-CA', {
+        timeZone: 'Asia/Jakarta',
+      }),
       jenis: formData.jenis,
       deskripsi: formData.deskripsi,
       jumlah: parseInt(formData.jumlah),
