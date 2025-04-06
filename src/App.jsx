@@ -108,7 +108,7 @@ function App() {
           >
             <Menu size={24} />
           </button>
-          <h1 className="text-xl font-semibold">Money Management</h1>
+          <h1 className="text-xl font-semibold">Money Mangement</h1>
         </div>
         <div className="hidden md:flex items-center space-x-4">
           <div className="relative">
@@ -134,7 +134,7 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 w-64 bg-green-700 text-white p-5 transform
+          className={`z-10 fixed inset-y-0 left-0 w-64 bg-green-700 text-white p-5 transform
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             transition-transform duration-200 ease-in-out
             md:relative md:translate-x-0`}
@@ -393,7 +393,7 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-green-100 text-center py-4 text-sm text-green-800">
-        &copy; 2025 Money Management. All rights reserved.
+        &copy; 2025 Money Mangement. All rights reserved.
       </footer>
     </div>
   );
