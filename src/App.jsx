@@ -66,8 +66,24 @@ function App() {
     setFormData({ jenis: 'Pemasukan', jumlah: '', deskripsi: '' });
   };
 
+  const currentMonth = new Date().toISOString().slice(0, 7); // contoh: "2025-04"
+  const thisMonthData = allData.filter((item) =>
+    item.tanggal.startsWith(currentMonth)
+  );
+
+  const totalPemasukan = thisMonthData
+    .filter((item) => item.jenis === 'Pemasukan')
+    .reduce((sum, item) => sum + item.jumlah, 0);
+
+  const totalPengeluaran = thisMonthData
+    .filter((item) => item.jenis === 'Pengeluaran')
+    .reduce((sum, item) => sum + item.jumlah, 0);
+
+  const saldo = totalPemasukan - totalPengeluaran;
+
   // filter & search
   const filtered = allData
+    .filter((tx) => tx.tanggal.startsWith(currentMonth))
     .filter((tx) => filterType === 'all' || tx.jenis === filterType)
     .filter(
       (tx) =>
@@ -206,6 +222,34 @@ function App() {
           <h2 className="text-2xl font-semibold mb-4 text-green-900">
             Pemasukan & Pengeluaran
           </h2>
+
+          {/* Ringkasan Bulan Ini */}
+          <div className="grid md:grid-cols-3 gap-4 mb-4">
+            <div className="bg-green-100 p-4 rounded-lg shadow border border-green-200">
+              <h3 className="text-green-800 font-semibold text-lg mb-1">
+                Total Pemasukan Bulan Ini
+              </h3>
+              <p className="text-2xl text-green-700 font-bold">
+                Rp {totalPemasukan.toLocaleString('id-ID')}
+              </p>
+            </div>
+            <div className="bg-red-100 p-4 rounded-lg shadow border border-red-200">
+              <h3 className="text-red-800 font-semibold text-lg mb-1">
+                Total Pengeluaran Bulan Ini
+              </h3>
+              <p className="text-2xl text-red-700 font-bold">
+                Rp {totalPengeluaran.toLocaleString('id-ID')}
+              </p>
+            </div>
+            <div className="bg-green-100 p-4 rounded-lg shadow border border-green-200">
+              <h3 className="text-green-800 font-semibold text-lg mb-1">
+                Sisa Saldo
+              </h3>
+              <p className="text-2xl text-green-700 font-bold">
+                Rp {saldo.toLocaleString('id-ID')}
+              </p>
+            </div>
+          </div>
 
           {/* Form */}
           <div className="bg-white p-6 rounded-lg shadow mb-6 border border-green-100">
