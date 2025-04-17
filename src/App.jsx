@@ -480,7 +480,7 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-green-100 text-center py-4 text-sm text-green-800">
-        &copy; 2025 Money Management. All rights reserved.
+        &copy; 2025 Money Management. Built with 🔥 by <strong>Elin</strong>.
       </footer>
     </div>
   );
