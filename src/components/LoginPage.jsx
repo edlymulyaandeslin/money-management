@@ -9,7 +9,10 @@ function LoginPage({ onLogin }) {
     e.preventDefault();
 
     // Dummy login logic
-    if (username === 'edlymulyaandeslin' && password === '159357') {
+    if (
+      (username === 'edlymulyaandeslin' && password === '159357') ||
+      (username === 'fadzil' && password === 'uya')
+    ) {
       localStorage.setItem('isLoggedIn', 'true');
       onLogin();
     } else {
