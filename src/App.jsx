@@ -10,6 +10,7 @@ import {
   Trash,
   X,
 } from 'lucide-react';
+import { DateTime } from 'luxon';
 import React, { useState } from 'react';
 import './App.css';
 import LaporanPage from './components/LaporanPage';
@@ -69,10 +70,14 @@ function App() {
     setFormData({ jenis: 'Pemasukan', jumlah: '', deskripsi: '' });
   };
 
-  const currentMonth = new Date().toISOString().slice(0, 7); // contoh: "2025-04"
+  const currentMonth = DateTime.now()
+    .setZone('Asia/Jakarta')
+    .toFormat('yyyy-MM'); // Format YYYY-MM
   const thisMonthData = allData.filter((item) =>
     item.tanggal.startsWith(currentMonth)
   );
+
+  console.log(currentMonth);
 
   const totalPemasukan = thisMonthData
     .filter((item) => item.jenis === 'Pemasukan')
